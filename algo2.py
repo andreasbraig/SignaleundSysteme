@@ -8,6 +8,7 @@ def run(value,value2,fileName,fig,saveValue=None):
     data, samplerate = sf.read(fileName)
 
     value = value / 100 * 0.6
+    value2 = (value2 / 100 * 28 ) + 1
 
     l = len(data)
     ts = 1/samplerate
@@ -16,7 +17,21 @@ def run(value,value2,fileName,fig,saveValue=None):
 
     fig.clf()
 
-    data2=data*cos
+    misch=data*cos
+
+    M=40
+    t2 = np.arange(-40,41,1)
+    filter = np.array([])
+    
+    for _,lauf in enumerate(t2):
+        element = np.exp((lauf*lauf*8)/(M*M))*np.sin((2*np.pi*value2*lauf)/len(t2))
+        filter= np.append(filter,element)
+
+
+    data2 = np.convolve(misch,filter,mode="same")
+
+    data2=data2/np.max(np.abs(data2))
+
     t = np.linspace(0, data2.size/samplerate,data2.size)
     ax = fig.add_subplot(2, 1, 2)
     ax.plot(t, data2)
@@ -34,5 +49,5 @@ def playAudio(data,samplerate):
     stream.close()
 
 if __name__ == '__main__':
-    run(10,0,"LadiesGentleman.ogg",plt.figure())
+    run(10,0,"Marsch.ogg",plt.figure())
     plt.show()
