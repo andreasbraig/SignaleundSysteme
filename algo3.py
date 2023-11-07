@@ -9,22 +9,35 @@ import matplotlib.pyplot as plt
 def run(value,value2,fileName,fig,saveValue=None):
 
     value = ((value / 100) * 66) +1
-    value2 = ((value2/100)*11)-5
-    Ts = 0.002
+    value2 = ((value2/10))-5
     N = 500
+    Ts = 1/N
     t = np.arange(0,1,Ts)
     sin = np.sin(2*np.pi*value*t)
-    y=np.random.rand(N)*value2
+    y=((np.random.rand(N)-0.5)*2)*value2
 
-    data = y + sin
+    n=N*9
+    N2=N+n
+    nuller=np.zeros(n)
+    add = y + sin
+    data = np.hstack((add,nuller))
+
+
+    fdata = np.fft.fftshift(np.abs(np.fft.fft(data)))
+    pos =np.argmax(fdata) 
 
     fig.clf()
-    t = np.linspace(0, data.size/N,data.size)
+    t = np.linspace(0, data.size/N-Ts,data.size)
     ax = fig.add_subplot(2, 1, 2)
     ax.plot(t, data)
     ax = fig.add_subplot(2, 1, 1)
-    f= np.linspace(-N/2, N/2,data.size)
-    ax.plot(f,np.fft.fftshift(np.abs(np.fft.fft(data))))
+    f= np.arange(-N/2, N/2,N/N2)
+
+    title = "Eingabefrequenz: " + str(round(value,2)) + ",Rauschen: " + str(round(value2,2)) + " Position des Maximums: " + str(abs(round(f[pos],2)))
+
+    fig.suptitle(title, fontsize=20)
+
+    ax.plot(f,fdata)
     fig.canvas.draw()
 
     multiproc.Process(target=playAudio,args=(data,N)).start()
