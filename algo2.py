@@ -34,10 +34,10 @@ def run(value,value2,fileName,fig,saveValue=None):
 
     t = np.linspace(0, data2.size/samplerate,data2.size)
     ax = fig.add_subplot(2, 1, 2)
-    ax.plot(t, data2)
+    ax.plot(t, data2, 'c')
     ax = fig.add_subplot(2, 1, 1)
     f= np.linspace(-samplerate/2, samplerate/2,data2.size)
-    ax.plot(f,np.fft.fftshift(np.abs(np.fft.fft(data2))))
+    ax.plot(f,np.fft.fftshift(np.abs(np.fft.fft(data2))), 'm')
 
     fig.canvas.draw()
 
